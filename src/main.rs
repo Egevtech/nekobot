@@ -128,7 +128,7 @@ async fn main() {
 fn username_to_string(username: &Option<String>) -> String {
     match username {
         Some(s) => format!("@{s}"),
-        None => "UNKNOWN".to_string(),
+        None => "NO_USERNAME".to_string(),
     }
 }
 /**
@@ -153,6 +153,6 @@ mod tests {
     #[test]
     fn username_print_test() {
         assert_eq!(&username_to_string(&Some("kaka".to_string())), "@kaka");
-        assert_eq!(&username_to_string(&None), "UNKNOWN");
+        assert_eq!(&username_to_string(&None), "NO_USERNAME");
     }
 }
