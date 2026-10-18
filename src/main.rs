@@ -90,7 +90,13 @@ async fn main() {
 
             match ollama.generate(req).await {
                 Ok(res) => {
-                    bot.send_message(chat_id, res.response)
+                    let mut resp = res.response;
+
+                    if resp.len() > 4096 {
+                        resp = cut_string(resp, 4096);
+                    }
+
+                    bot.send_message(chat_id, resp)
                         .reply_parameters(ReplyParameters::new(msg.id))
                         .await?
                 }
