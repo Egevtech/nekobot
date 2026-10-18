@@ -49,7 +49,7 @@ async fn main() {
             }
 
             let chat_id = msg.chat_id().unwrap();
-            let from = msg.from.unwrap();
+            let from = msg.from.clone().unwrap();
             let text = msg.text().unwrap().to_string();
             let msg_parts = text
                 .split(" ")
