@@ -114,3 +114,23 @@ async fn main() {
         .dispatch()
         .await;
 }
+
+/**
+ * `Range` - maximum length of `msg`
+ */
+fn cut_string(str: String, max: usize) -> String {
+    str.chars().take(max - 3).collect::<String>() + "..."
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn cut_message_test() {
+        let str = "123456789".to_string();
+        let sstr = cut_string(str.clone(), 5); // 12...
+
+        assert_eq!(sstr, "12...");
+    }
+}
