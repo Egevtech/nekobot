@@ -68,7 +68,7 @@ async fn main() {
                 return Hyeta::Ok(());
             };
 
-            tokio::spawn(  {
+            let chatact_task = tokio::spawn(  {
                 let chat_id = chat_id.clone();
                 let bot = bot.clone();
                 
@@ -108,6 +108,8 @@ async fn main() {
                         .await?
                 }
             };
+
+            chatact_task.abort();
 
             println!("Request done");
 
