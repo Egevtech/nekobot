@@ -49,6 +49,7 @@ async fn main() {
             }
 
             let chat_id = msg.chat_id().unwrap();
+            let from = msg.from.unwrap();
             let text = msg.text().unwrap().to_string();
             let msg_parts = text
                 .split(" ")
@@ -60,6 +61,7 @@ async fn main() {
             }
 
             let Ok(_guard) = busy.try_lock() else {
+                println!("Request from {}(@{:?}) blocked, because bot is already busy", from.first_name, from.username);
                 bot.send_message(chat_id, "Я уже отвечаю на другой запрос...")
                     .reply_parameters(ReplyParameters::new(msg.id))
                     .await?;
@@ -82,7 +84,7 @@ async fn main() {
             });
 
             let prompt = msg_parts[1..].join(" ");
-            println!("Request from {}: {}", msg.from.unwrap().first_name, prompt);
+            println!("Request from {}(@{:?}): {}", from.first_name, from.username, prompt);
 
             let req = GenerationRequest::new(dyn_config.get_ollama_settings().get_model(), prompt)
                 .think(false)
@@ -106,6 +108,8 @@ async fn main() {
                         .await?
                 }
             };
+
+            println!("Request done");
 
             Hyeta::Ok(())
         }
