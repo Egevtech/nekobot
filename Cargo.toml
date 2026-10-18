@@ -1,0 +1,11 @@
+[package]
+name = "nekobot"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ollama-rs = { version = "0.3.6", features = ["tokio"] }
+serde = { version = "1.0.229", features = ["derive"] }
+teloxide = { version = "0.17.0" }
+tokio = { version = "1.53.3", features = ["full"] }
+toml = "1.1.8"
