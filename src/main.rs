@@ -66,8 +66,20 @@ async fn main() {
                 return Hyeta::Ok(());
             };
 
-            bot.send_chat_action(chat_id, teloxide::types::ChatAction::Typing)
-                .await?;
+            tokio::spawn(  {
+                let chat_id = chat_id.clone();
+                let bot = bot.clone();
+                
+                async move {
+                    loop {
+                        if let Err(e) =bot.clone().send_chat_action(chat_id, teloxide::types::ChatAction::Typing).await {
+                            eprintln!("ChatAction thread failure: {e}");
+                        } 
+
+                        tokio::time::sleep(tokio::time::Duration::from_millis(4000)).await;
+                    }
+                }
+            });
 
             let prompt = msg_parts[1..].join(" ");
             println!("Request from {}: {}", msg.from.unwrap().first_name, prompt);
