@@ -83,7 +83,7 @@ async fn main() {
                 }
             });
 
-            let prompt = msg_parts[1..].join(" ");
+            let prompt = format!("{} пишет: ", username_to_string(&from.username)) + &msg_parts[1..].join(" ");
             println!("Request from {}({}): {}", from.first_name, username_to_string(&from.username), prompt);
 
             let req = GenerationRequest::new(dyn_config.get_ollama_settings().get_model(), prompt)
