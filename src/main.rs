@@ -61,7 +61,7 @@ async fn main() {
             }
 
             let Ok(_guard) = busy.try_lock() else {
-                println!("Request from {}(@{:?}) blocked, because bot is already busy", from.first_name, from.username);
+                println!("Request from {}({}) blocked, because bot is already busy", from.first_name, username_to_string(&from.username));
                 bot.send_message(chat_id, "Я уже отвечаю на другой запрос...")
                     .reply_parameters(ReplyParameters::new(msg.id))
                     .await?;
@@ -84,7 +84,7 @@ async fn main() {
             });
 
             let prompt = msg_parts[1..].join(" ");
-            println!("Request from {}(@{:?}): {}", from.first_name, from.username, prompt);
+            println!("Request from {}({}): {}", from.first_name, username_to_string(&from.username), prompt);
 
             let req = GenerationRequest::new(dyn_config.get_ollama_settings().get_model(), prompt)
                 .think(false)
@@ -125,6 +125,12 @@ async fn main() {
         .await;
 }
 
+fn username_to_string(username: &Option<String>) -> String {
+    match username {
+        Some(s) => format!("@{s}"),
+        None => "UNKNOWN".to_string(),
+    }
+}
 /**
  * `Range` - maximum length of `msg`
  */
@@ -142,5 +148,11 @@ mod tests {
         let sstr = cut_string(str.clone(), 5); // 12...
 
         assert_eq!(sstr, "12...");
+    }
+
+    #[test]
+    fn username_print_test() {
+        assert_eq!(&username_to_string(&Some("kaka".to_string())), "@kaka");
+        assert_eq!(&username_to_string(&None), "UNKNOWN");
     }
 }
