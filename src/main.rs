@@ -44,14 +44,10 @@ async fn main() {
     let database = db::Database::new(const_config.get_database_settings().get_db_path());
     let arc_db = Arc::new(Mutex::new(database));
 
-    let ollama;
-    if const_config.get_ollama_settings().has_url() {
-        ollama =
-            Ollama::try_new(const_config.get_ollama_settings().get_url().unwrap()).expect("Failed to create ollama instance");
-    } else {
-        ollama = 
-            Ollama::default();
-    }
+    let ollama = match const_config.get_ollama_settings().get_url() {
+        Some(s) => Ollama::try_new(s).expect("Failed to create ollama instance"),
+        None => Ollama::default()
+    };
 
     let handler = Update::filter_message().endpoint(move |bot: Bot, msg: Message| {
         type Hyeta = Result<(), teloxide::RequestError>;
