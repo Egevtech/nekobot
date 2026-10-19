@@ -14,7 +14,6 @@ use teloxide::{
 };
 
 use config::*;
-use db::*;
 use args::Cmd;
 
 #[tokio::main]
@@ -29,7 +28,8 @@ async fn main() {
         std::fs::remove_file("./bot.db").expect("Failed to remove old database");
     }
 
-    let db_connection = db::init_database();
+    let database = db::Database::new();
+    let arc_db = Arc::new(Mutex::new(database));
 
     let ollama;
     if const_config.get_ollama_settings().has_url() {
@@ -46,6 +46,7 @@ async fn main() {
         let ollama = ollama.clone();
         let const_config = const_config.clone();
         let busy = busy.clone();
+        let arc_db = arc_db.clone();
 
         async move {
             let dyn_config = match dyn_conf::DynConfig::get() {
@@ -71,6 +72,24 @@ async fn main() {
             if msg_parts.len() < 2 || msg_parts[0].to_lowercase() != const_config.get_telegram_settings().get_callsign() {
                 return Hyeta::Ok(());
             }
+
+            tokio::spawn({
+                let arc_db = arc_db.clone();
+                let user_id = from.id.0;
+                let username = from.username.clone();
+
+                async move {
+                    let db = arc_db.lock().await;
+
+                    if !db.is_user_in_database(user_id).expect("Failed to check if user is already in database") {
+                        println!("Pushing user {}({}) to database", user_id, username_to_string(&username));
+
+                        db.add_user(user_id).expect("Failed to add user to the database");
+                    } else {
+                        println!("User {}({}) already in database", user_id, username_to_string(&username));
+                    }
+                }
+            });
 
             let Ok(_guard) = busy.try_lock() else {
                 println!("Request from {}({}) blocked, because bot is already busy", from.first_name, username_to_string(&from.username));
