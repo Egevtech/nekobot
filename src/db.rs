@@ -28,8 +28,31 @@ impl Database {
     pub fn add_user(&self, user_id: u64) -> rusqlite::Result<()> {
         let query = include_str!("../extern/sql/add_user.sql");
 
-        self.connection.execute(query, (user_id as i64, 0))?;
+        self.connection.execute(query, [user_id as i64, 0])?;
 
         Ok(())
+    }
+
+    pub fn is_user_in_database(&self, user_id: u64) -> rusqlite::Result<bool> {
+
+        let query = include_str!("../extern/sql/get_user_by_userid.sql");
+
+        Ok(
+            self.connection.query_row(
+                query,
+                [user_id as i64],
+
+                |row| {
+                    Ok(
+                        (
+                            row.get::<_, i32>(0)?,
+                            row.get::<_, i64>(1)?,
+                            row.get::<_, i32>(2)?
+                        )
+                    )
+                }
+            )
+            .is_ok()
+        )
     }
 }
