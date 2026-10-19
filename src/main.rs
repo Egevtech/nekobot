@@ -87,7 +87,7 @@ async fn main() {
             println!("Request from {}({}): {}", from.first_name, username_to_string(&from.username), prompt);
 
             let req = GenerationRequest::new(dyn_config.get_ollama_settings().get_model(), prompt)
-                .think(false)
+                .think(dyn_config.get_ollama_settings().get_thinking())
                 .system(dyn_config.get_ollama_settings().get_system_prompt());
 
             match ollama.generate(req).await {

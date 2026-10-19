@@ -67,6 +67,7 @@ pub mod dyn_conf {
     #[derive(Deserialize, Clone)]
     pub struct OllamaSettings {
         model: String,
+        thinking: bool,
         sys_prompt: String,
     }
 
@@ -109,6 +110,10 @@ pub mod dyn_conf {
 
         pub fn get_system_prompt(&self) -> String {
             self.sys_prompt.clone()
+        }
+
+        pub fn get_thinking(&self) -> bool {
+            self.thinking.clone()
         }
     }
 }
