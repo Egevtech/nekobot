@@ -1,5 +1,6 @@
-pub mod config;
-pub mod constants;
+mod config;
+mod constants;
+mod db;
 
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -12,12 +13,14 @@ use teloxide::{
 };
 
 use config::*;
+use db::*;
 
 #[tokio::main]
 async fn main() {
     let const_config = const_conf::ConstConfig::get().expect("Failed to read configuration");
     let bot = Bot::new(const_config.get_telegram_settings().get_token());
     let busy = Arc::new(Mutex::new(()));
+    let db_connection = db::init_database();
 
     let ollama;
     if const_config.get_ollama_settings().has_url() {

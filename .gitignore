@@ -2,3 +2,5 @@
 
 const_config.toml
 dyn_config.toml
+
+bot.db
