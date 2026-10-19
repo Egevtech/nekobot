@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS users(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username VARCHAR(32),
+    username VARCHAR(32) UNIQUE,
     use_cout INTEGER
 )
