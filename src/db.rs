@@ -1,3 +1,5 @@
+use rusqlite::params;
+
 pub struct Database {
     connection: rusqlite::Connection,
 }
@@ -42,24 +44,13 @@ impl Database {
 
     pub fn is_user_in_database(&self, user_id: u64) -> rusqlite::Result<bool> {
 
-        let query = include_str!("../extern/sql/get_user_by_userid.sql");
+        let query = include_str!("../extern/sql/is_user_exists_by_userid.sql");
+
+        let mut stmt = self.connection.prepare(query)?;
 
         Ok(
-            self.connection.query_row(
-                query,
-                [user_id as i64],
-
-                |row| {
-                    Ok(
-                        (
-                            row.get::<_, i32>(0)?,
-                            row.get::<_, i64>(1)?,
-                            row.get::<_, i32>(2)?
-                        )
-                    )
-                }
-            )
-            .is_ok()
+            stmt.query_row(params![user_id as i64], |row| row.get(0))?
         )
+
     }
 }
