@@ -1,6 +1,7 @@
 mod config;
 mod constants;
 mod db;
+mod args;
 
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -14,12 +15,20 @@ use teloxide::{
 
 use config::*;
 use db::*;
+use args::Cmd;
 
 #[tokio::main]
 async fn main() {
     let const_config = const_conf::ConstConfig::get().expect("Failed to read configuration");
     let bot = Bot::new(const_config.get_telegram_settings().get_token());
     let busy = Arc::new(Mutex::new(()));
+
+    let args = Cmd::get_args();
+
+    if args.recreate_database && std::fs::exists("./bot.db").unwrap() {
+        std::fs::remove_file("./bot.db").expect("Failed to remove old database");
+    }
+
     let db_connection = db::init_database();
 
     let ollama;
