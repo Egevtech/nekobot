@@ -24,8 +24,9 @@ async fn main() {
 
     let args = Cmd::get_args();
 
-    match args.subcommand {
-        args::SCommand::RecreateDatabase{recreate_only}=> {
+    if args.subcommand.is_some() {
+        match args.subcommand.unwrap() {
+            args::SCommand::RecreateDatabase{recreate_only} => {
             if std::fs::exists(const_config.get_database_settings().get_db_path()).unwrap() {
                 std::fs::remove_file(const_config.get_database_settings().get_db_path()).expect("Failed to remove old database");
             }
@@ -37,6 +38,7 @@ async fn main() {
                 std::process::exit(0);
             }
         }
+    }
     }
 
     let database = db::Database::new(const_config.get_database_settings().get_db_path());

@@ -14,7 +14,7 @@ pub enum SCommand{
 #[derive(Parser)]
 pub struct Cmd {
     #[clap(subcommand)]
-    pub subcommand: SCommand,
+    pub subcommand: Option<SCommand>,
 }
 
 impl Cmd {
