@@ -51,7 +51,7 @@ pub mod const_conf {
         }
 
         pub fn get_callsign(&self) -> &str {
-            &self.callsign.to_lowercase()
+            Box::new(self.callsign.to_lowercase()).leak()
         }
     }
 
