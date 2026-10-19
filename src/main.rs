@@ -165,7 +165,7 @@ fn username_to_string(username: &Option<String>) -> String {
     }
 }
 /**
- * `Range` - maximum length of `msg`
+ * `max` - maximum length of `msg`, include '...'
  */
 fn cut_string(str: String, max: usize) -> String {
     str.chars().take(max - 3).collect::<String>() + "..."
