@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS users(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    userid BIGINT UNIQUE
-    use_cout INTEGER
+    userid BIGINT UNIQUE,
+    use_count INTEGER
 )
