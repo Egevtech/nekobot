@@ -59,10 +59,6 @@ pub mod const_conf {
         pub fn get_url(&self) -> Option<&str> {
             self.url.as_deref()
         }
-
-        pub fn has_url(&self) -> bool {
-            self.url.is_some()
-        }
     }
 
     impl DatabaseSettings {
