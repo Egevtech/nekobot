@@ -60,7 +60,6 @@ async fn main() {
         let const_config = const_config.clone();
         let busy = busy.clone();
         let arc_db = arc_db.clone();
-        let from = msg.from.clone().unwrap();
 
         async move {
             let dyn_config = match dyn_conf::DynConfig::get() {
