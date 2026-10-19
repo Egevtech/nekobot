@@ -1,5 +1,3 @@
-use rusqlite::params;
-
 pub struct Database {
     connection: rusqlite::Connection,
 }
@@ -33,9 +31,5 @@ impl Database {
         self.connection.execute(query, (user_id as i64, 0))?;
 
         Ok(())
-    }
-
-    pub fn get_connection(&self) -> &rusqlite::Connection {
-        &self.connection
     }
 }
