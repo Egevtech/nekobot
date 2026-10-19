@@ -19,7 +19,7 @@ use args::Cmd;
 #[tokio::main]
 async fn main() {
     let const_config = const_conf::ConstConfig::get().expect("Failed to read configuration");
-    let bot = Bot::new(const_config.get_telegram_settings().get_token());
+    let bot = Bot::new(const_config.telegram.get_token());
     let busy = Arc::new(Mutex::new(()));
 
     let args = Cmd::get_args();
@@ -27,24 +27,24 @@ async fn main() {
     if args.subcommand.is_some() {
         match args.subcommand.unwrap() {
             args::SCommand::RecreateDatabase{recreate_only} => {
-                if std::fs::exists(const_config.get_database_settings().get_db_path()).unwrap() {
-                    std::fs::remove_file(const_config.get_database_settings().get_db_path()).expect("Failed to remove old database");
+                if std::fs::exists(const_config.database.get_db_path()).unwrap() {
+                    std::fs::remove_file(const_config.database.get_db_path()).expect("Failed to remove old database");
                 }
 
                 println!("Database removed");
 
                 if recreate_only {
-                    db::Database::new(const_config.get_database_settings().get_db_path());
+                    db::Database::new(const_config.database.get_db_path());
                     std::process::exit(0);
                 }
             }
         }
     }
 
-    let database = db::Database::new(const_config.get_database_settings().get_db_path());
+    let database = db::Database::new(const_config.database.get_db_path());
     let arc_db = Arc::new(Mutex::new(database));
 
-    let ollama = match const_config.get_ollama_settings().get_url() {
+    let ollama = match const_config.ollama.get_url() {
         Some(s) => Ollama::try_new(s).expect("Failed to create ollama instance"),
         None => Ollama::default()
     };
@@ -78,7 +78,7 @@ async fn main() {
                 .map(|x| x.to_string())
                 .collect::<Vec<String>>();
 
-            if msg_parts.len() < 2 || msg_parts[0].to_lowercase() != const_config.get_telegram_settings().get_callsign() {
+            if msg_parts.len() < 2 || msg_parts[0].to_lowercase() != const_config.telegram.get_callsign() {
                 return Hyeta::Ok(());
             }
 
@@ -127,9 +127,9 @@ async fn main() {
             let prompt = format!("{} пишет: ", username_to_string(&from.username)) + &msg_parts[1..].join(" ");
             println!("Request from {}({}): {}", from.first_name, username_to_string(&from.username), prompt);
 
-            let req = GenerationRequest::new(dyn_config.get_ollama_settings().get_model(), prompt)
-                .think(dyn_config.get_ollama_settings().get_thinking())
-                .system(dyn_config.get_ollama_settings().get_system_prompt());
+            let req = GenerationRequest::new(dyn_config.ollama.get_model(), prompt)
+                .think(dyn_config.ollama.get_thinking())
+                .system(dyn_config.ollama.get_system_prompt());
 
             match ollama.generate(req).await {
                 Ok(res) => {

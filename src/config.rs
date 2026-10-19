@@ -6,9 +6,9 @@ pub mod const_conf {
 
     #[derive(Deserialize, Clone)]
     pub struct ConstConfig {
-        ollama: OllamaSettings,
-        telegram: TelegramSettings,
-        database: DatabaseSettings,
+        pub ollama: OllamaSettings,
+        pub telegram: TelegramSettings,
+        pub database: DatabaseSettings,
     }
 
     #[derive(Deserialize, Clone)]
@@ -30,18 +30,6 @@ pub mod const_conf {
     impl ConstConfig {
         pub fn get() -> Result<Self, toml::de::Error> {
             toml::from_str(COST_CFG)
-        }
-
-        pub fn get_ollama_settings(&self) -> &OllamaSettings {
-            &self.ollama
-        }
-
-        pub fn get_telegram_settings(&self) -> &TelegramSettings {
-            &self.telegram
-        }
-
-        pub fn get_database_settings(&self) -> &DatabaseSettings {
-            &self.database
         }
     }
 
@@ -73,7 +61,7 @@ pub mod dyn_conf {
 
     #[derive(Deserialize, Clone)]
     pub struct DynConfig {
-        ollama: OllamaSettings,
+        pub ollama: OllamaSettings,
     }
 
     #[derive(Deserialize, Clone)]
@@ -108,10 +96,6 @@ pub mod dyn_conf {
                 )
                 .map_err(ConfigError::TomlError)?
             )
-        }
-
-        pub fn get_ollama_settings(&self) -> &OllamaSettings {
-            &self.ollama
         }
     }
 
