@@ -51,7 +51,7 @@ pub mod const_conf {
         }
 
         pub fn get_callsign(&self) -> &str {
-            &self.callsign
+            &self.callsign.to_lowercase()
         }
     }
 
