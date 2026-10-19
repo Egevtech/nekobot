@@ -24,11 +24,11 @@ async fn main() {
 
     let args = Cmd::get_args();
 
-    if args.recreate_database && std::fs::exists("./bot.db").unwrap() {
-        std::fs::remove_file("./bot.db").expect("Failed to remove old database");
+    if args.recreate_database && std::fs::exists(const_config.get_database_settings().get_db_path()).unwrap() {
+        std::fs::remove_file(const_config.get_database_settings().get_db_path()).expect("Failed to remove old database");
     }
 
-    let database = db::Database::new();
+    let database = db::Database::new(const_config.get_database_settings().get_db_path());
     let arc_db = Arc::new(Mutex::new(database));
 
     let ollama;

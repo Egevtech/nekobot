@@ -2,8 +2,8 @@ pub struct Database {
     connection: rusqlite::Connection,
 }
 
-fn init_database() -> rusqlite::Connection {
-    let connection = rusqlite::Connection::open("bot.db").expect("Failed to load database");
+fn init_database(path: String) -> rusqlite::Connection {
+    let connection = rusqlite::Connection::open(path).expect("Failed to load database");
 
     let query = include_str!("../extern/sql/create_query.sql");
     connection.execute(query, ()).expect("Failed to execute init query");
@@ -12,9 +12,9 @@ fn init_database() -> rusqlite::Connection {
 }
 
 impl Database {
-    pub fn new() -> Self {
+    pub fn new(path: String) -> Self {
         Self { 
-            connection: init_database()
+            connection: init_database(path)
         }
     }
 

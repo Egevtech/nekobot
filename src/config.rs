@@ -8,6 +8,7 @@ pub mod const_conf {
     pub struct ConstConfig {
         ollama: OllamaSettings,
         telegram: TelegramSettings,
+        database: DatabaseSettings,
     }
 
     #[derive(Deserialize, Clone)]
@@ -19,6 +20,11 @@ pub mod const_conf {
     pub struct TelegramSettings {
         callsign: String,
         token: String,
+    }
+    
+    #[derive(Deserialize, Clone)]
+    pub struct DatabaseSettings {
+        db: String,
     }
 
     impl ConstConfig {
@@ -32,6 +38,10 @@ pub mod const_conf {
 
         pub fn get_telegram_settings(&self) -> &TelegramSettings {
             &self.telegram
+        }
+
+        pub fn get_database_settings(&self) -> &DatabaseSettings {
+            &self.database
         }
     }
 
@@ -52,6 +62,12 @@ pub mod const_conf {
 
         pub fn has_url(&self) -> bool {
             self.url.is_some()
+        }
+    }
+
+    impl DatabaseSettings {
+        pub fn get_db_path(&self) -> String {
+            self.db.clone()
         }
     }
 }
