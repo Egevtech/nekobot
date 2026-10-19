@@ -1,0 +1,1 @@
+INSERT INTO users (username, count) VALUES (?1, ?2)
