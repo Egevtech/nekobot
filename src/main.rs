@@ -27,18 +27,18 @@ async fn main() {
     if args.subcommand.is_some() {
         match args.subcommand.unwrap() {
             args::SCommand::RecreateDatabase{recreate_only} => {
-            if std::fs::exists(const_config.get_database_settings().get_db_path()).unwrap() {
-                std::fs::remove_file(const_config.get_database_settings().get_db_path()).expect("Failed to remove old database");
-            }
+                if std::fs::exists(const_config.get_database_settings().get_db_path()).unwrap() {
+                    std::fs::remove_file(const_config.get_database_settings().get_db_path()).expect("Failed to remove old database");
+                }
 
-            println!("Database removed");
+                println!("Database removed");
 
-            if recreate_only {
-                db::Database::new(const_config.get_database_settings().get_db_path());
-                std::process::exit(0);
+                if recreate_only {
+                    db::Database::new(const_config.get_database_settings().get_db_path());
+                    std::process::exit(0);
+                }
             }
         }
-    }
     }
 
     let database = db::Database::new(const_config.get_database_settings().get_db_path());
@@ -60,6 +60,7 @@ async fn main() {
         let const_config = const_config.clone();
         let busy = busy.clone();
         let arc_db = arc_db.clone();
+        let from = msg.from.clone().unwrap();
 
         async move {
             let dyn_config = match dyn_conf::DynConfig::get() {
@@ -90,6 +91,7 @@ async fn main() {
                 let arc_db = arc_db.clone();
                 let user_id = from.id.0;
                 let username = from.username.clone();
+                let from = from.clone();
 
                 async move {
                     let db = arc_db.lock().await;
@@ -97,7 +99,7 @@ async fn main() {
                     if !db.is_user_in_database(user_id).expect("Failed to check if user is already in database") {
                         println!("Pushing user {}({}) to database", user_id, username_to_string(&username));
 
-                        db.add_user(user_id).expect("Failed to add user to the database");
+                        db.add_user(from.clone()).expect("Failed to add user to the database");
                     } else {
                         println!("User {}({}) already in database", user_id, username_to_string(&username));
                     }
@@ -171,7 +173,7 @@ async fn main() {
         .await;
 }
 
-fn username_to_string(username: &Option<String>) -> String {
+pub fn username_to_string(username: &Option<String>) -> String {
     match username {
         Some(s) => format!("@{s}"),
         None => "NO_USERNAME".to_string(),

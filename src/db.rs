@@ -25,10 +25,17 @@ impl Database {
     * But SQL does not support u64(which is recommended type) as BIGINT.
     * In SQL BIGINT is signed integer
     */
-    pub fn add_user(&self, user_id: u64) -> rusqlite::Result<()> {
+    pub fn add_user(&self, from: teloxide::types::User) -> rusqlite::Result<()> {
         let query = include_str!("../extern/sql/add_user.sql");
 
-        self.connection.execute(query, [user_id as i64, 0])?;
+        self.connection.execute(query, 
+            (
+                from.id.0 as i64,
+                0,
+                super::username_to_string(&from.username),
+                from.first_name,
+            )
+        )?;
 
         Ok(())
     }

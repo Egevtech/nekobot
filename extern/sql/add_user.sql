@@ -1,1 +1,1 @@
-INSERT INTO users (userid, use_count) VALUES (?1, ?2)
+INSERT INTO users (userid, use_count, username, user_first_name) VALUES (?1, ?2, ?3, ?4)

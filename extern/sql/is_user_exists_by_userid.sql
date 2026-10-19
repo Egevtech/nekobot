@@ -1,0 +1,1 @@
+SELECT EXISTS (SElECT 1 FROM users WHERE userid = ?1)
