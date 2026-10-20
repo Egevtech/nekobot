@@ -20,6 +20,7 @@ pub mod const_conf {
     pub struct TelegramSettings {
         callsign: String,
         token: String,
+        message_length: usize,
     }
     
     #[derive(Deserialize, Clone)]
@@ -40,6 +41,10 @@ pub mod const_conf {
 
         pub fn get_callsign(&self) -> &str {
             Box::new(self.callsign.to_lowercase()).leak()
+        }
+
+        pub fn get_message_length(&self) -> usize{
+            self.message_length
         }
     }
 

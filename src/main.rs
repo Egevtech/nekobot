@@ -133,7 +133,7 @@ async fn main() {
 
             match ollama.generate(req).await {
                 Ok(res) => {
-                    let messages = split_string_by(res.response, 4096);
+                    let messages = split_string_by(res.response, const_config.telegram.get_message_length());
 
                     for message in messages {
                         bot.send_message(chat_id, message)
