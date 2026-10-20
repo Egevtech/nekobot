@@ -2,6 +2,7 @@ mod config;
 mod constants;
 mod db;
 mod args;
+mod splitby;
 
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -14,6 +15,7 @@ use teloxide::{
 };
 
 use config::*;
+use splitby::*;
 use args::Cmd;
 
 #[tokio::main]
@@ -133,7 +135,7 @@ async fn main() {
 
             match ollama.generate(req).await {
                 Ok(res) => {
-                    let messages = split_string_by(res.response, const_config.telegram.get_message_length());
+                    let messages = res.response.split_by(const_config.telegram.get_message_length());
 
                     for message in messages {
                         bot.send_message(chat_id, message)
@@ -173,33 +175,6 @@ pub fn username_to_string(username: &Option<String>) -> String {
     }
 }
 
-fn split_string_by(str: String, max: usize) -> Vec<String> {
-    if str.len() < max {
-        return vec![str]
-    }
-
-    let chars = str.chars().collect::<Vec<char>>();
-
-    let mut i: usize = 0usize;
-    let mut blocksize: usize = 0usize;
-    let mut res: Vec<String> = Vec::with_capacity(2);
-
-    while i < chars.len() {
-        let mut block = String::new();
-
-        while blocksize < max && i < chars.len() {
-            block.push(chars[i]);
-            blocksize += 1;
-            i += 1;
-        }
-
-        blocksize = 0;
-
-        res.push(block);
-    }
-    
-    res
-}
 
 #[cfg(test)]
 mod tests {
@@ -209,29 +184,5 @@ mod tests {
     fn username_print_test() {
         assert_eq!(&username_to_string(&Some("kaka".to_string())), "@kaka");
         assert_eq!(&username_to_string(&None), "NO_USERNAME");
-    }
-
-    #[test]
-    fn string_split_test1() {
-        let str = "1234567890".to_string();
-        let strs = split_string_by(str, 4);
-
-        assert_eq!(strs, vec!["1234".to_string(), "5678".to_string(), "90".to_string()]);
-    }
-
-    #[test]
-    fn string_split_test2() {
-        let str = "1234".to_string();
-        let strs = split_string_by(str, 4);
-
-        assert_eq!(strs, vec!["1234".to_string()]);
-    }
-
-    #[test]
-    fn string_split_test3() {
-        let str = "123".to_string();
-        let strs = split_string_by(str, 4);
-
-        assert_eq!(strs, vec!["123".to_string()]);
     }
 }
