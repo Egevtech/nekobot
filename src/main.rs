@@ -133,7 +133,7 @@ async fn main() {
                 
                 async move {
                     loop {
-                        if let Err(e) =bot.clone().send_chat_action(chat_id, teloxide::types::ChatAction::Typing).await {
+                        if let Err(e) = bot.clone().send_chat_action(chat_id, teloxide::types::ChatAction::Typing).await {
                             eprintln!("ChatAction thread failure: {e}");
                         } 
 
