@@ -46,6 +46,25 @@ async fn main() {
     let database = db::Database::new(const_config.database.get_db_path());
     let arc_db = Arc::new(Mutex::new(database));
 
+    tokio::spawn( {
+        let arc_db = arc_db.clone();
+
+        async move {
+            loop {
+                {
+                    let db = arc_db.lock().await;
+                    if let Err(e) = db.checkpoint() {
+                        eprintln!("CHECKPOINT FAILED! {}", e);
+                    } else {
+                        println!("Checkpoint successfully written");
+                    }
+                }
+
+                tokio::time::sleep(tokio::time::Duration::from_mins(5)).await;
+            }
+        }
+    });
+
     let ollama = match const_config.ollama.get_url() {
         Some(s) => Ollama::try_new(s).expect("Failed to create ollama instance"),
         None => Ollama::default()
@@ -91,9 +110,11 @@ async fn main() {
                         println!("Pushing user {}({}) to database", user_id, username_to_string(&username));
 
                         db.add_user(from.clone()).expect("Failed to add user to the database");
+                        db.checkpoint().unwrap();
                     } else {
                         let uses = db.increase_user_uses(user_id).unwrap();
                         println!("User {}({}) already in database. {} used this bot {} times", user_id, username_to_string(&username), user_id, uses);
+                        db.checkpoint().unwrap();
                     }
                 }
             });

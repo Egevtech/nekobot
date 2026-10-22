@@ -69,4 +69,8 @@ impl Database {
 
         Ok(use_count)
     }
+
+    pub fn checkpoint(&self) -> rusqlite::Result<()> {
+        self.connection.pragma_update(None, "wal_checkpoint", "PASSIVE")
+    }
 }
