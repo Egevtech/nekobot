@@ -20,7 +20,7 @@ use args::Cmd;
 
 #[tokio::main]
 async fn main() {
-    let const_config = const_conf::ConstConfig::get().expect("Failed to read configuration");
+    let const_config = const_config::ConstConfig::get().expect("Failed to read configuration");
     let bot = Bot::new(const_config.telegram.get_token());
     let busy = Arc::new(Mutex::new(()));
 
@@ -60,13 +60,7 @@ async fn main() {
         let arc_db = arc_db.clone();
 
         async move {
-            let dyn_config = match dyn_conf::DynConfig::get() {
-                Ok(s) => s,
-                Err(e) => {
-                    eprintln!("Preparing dynamic configuration failed: {e}");
-                    return Hyeta::Ok(());
-                }
-            };
+            let dyn_config = dyn_config::DynConfig::get();
 
             if msg.text().is_none() || msg.chat_id().is_none() || msg.from.is_none() {
                 return Hyeta::Ok(());
@@ -126,7 +120,7 @@ async fn main() {
                 }
             });
 
-            let prompt = format!("{} пишет: ", username_to_string(&from.username)) + &msg_parts[1..].join(" ");
+            let prompt = format!("{} пишет: ", username_to_string(&from.username)) + &msg_parts[1..].join(" ")[..];
             println!("Request from {}({}): {}", from.first_name, username_to_string(&from.username), prompt);
 
             let req = GenerationRequest::new(dyn_config.ollama.get_model(), prompt)

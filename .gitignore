@@ -1,6 +1,6 @@
 /target
 
 const_config.toml
-dyn_config.toml
+dyn_config.rhai
 
 bot.db

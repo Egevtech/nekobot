@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 clap = { version = "4.6.7", features = ["derive"] }
 ollama-rs = { version = "0.3.6", features = ["tokio"] }
+rhai = { version = "1.26.1", features = ["serde"] }
 rusqlite = "0.40.2"
 serde = { version = "1.0.229", features = ["derive"] }
 teloxide = { version = "0.17.0" }
