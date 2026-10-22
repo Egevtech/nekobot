@@ -53,4 +53,20 @@ impl Database {
         )
 
     }
+
+    pub fn increase_user_uses(&self, user_id: u64) -> rusqlite::Result<u32> {
+        // SELECT use_count FROM users WHERE userid = ?1
+        let get_query = include_str!("../extern/sql/get_user_uses.sql");
+        
+        let mut stmt = self.connection.prepare(get_query)?;
+        
+        let use_count: u32 = stmt.query_row(params![user_id as i64], |row| row.get::<_, u32>(0))? + 1;
+
+        // UPDATE users SET use_count = ?1 WHERE userid = ?2
+        let set_query = include_str!("../extern/sql/set_user_uses.sql");
+
+        self.connection.execute(set_query, params![use_count, user_id as i64])?;
+
+        Ok(use_count)
+    }
 }

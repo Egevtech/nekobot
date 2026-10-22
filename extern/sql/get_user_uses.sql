@@ -1,0 +1,1 @@
+SELECT use_count FROM users WHERE userid = ?1

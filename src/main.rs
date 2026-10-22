@@ -92,7 +92,8 @@ async fn main() {
 
                         db.add_user(from.clone()).expect("Failed to add user to the database");
                     } else {
-                        println!("User {}({}) already in database", user_id, username_to_string(&username));
+                        let uses = db.increase_user_uses(user_id).unwrap();
+                        println!("User {}({}) already in database. {} used this bot {} times", user_id, username_to_string(&username), user_id, uses);
                     }
                 }
             });
