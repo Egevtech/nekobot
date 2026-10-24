@@ -1,7 +1,5 @@
 use bevy_reflect::prelude::*;
 
-use crate::config::response_config::{ParseError::{UnexpectedIdent, UnterminatedStringLiteral}, Token::StringLiteral};
-
 #[derive(Reflect, PartialEq, Debug, Clone)]
 pub struct RequestConfig {
     model: String,
@@ -113,7 +111,7 @@ impl RequestConfig {
                 if i > tokens.len() {
                     return Err(ParseError::UnexpectedEndOfTokenStream);
                 }
-                if let StringLiteral(a) = tokens[i].clone() {
+                if let Token::StringLiteral(a) = tokens[i].clone() {
                     field_value = a;
                 } else {
                     return Err(ParseError::UnexpectedToken(tokens[i].clone()));
@@ -164,10 +162,10 @@ impl RequestConfig {
                 }
 
                 if i >= chars.len() {
-                    return Err(UnterminatedStringLiteral);
+                    return Err(ParseError::UnterminatedStringLiteral);
                 }
 
-                token_stream.push(StringLiteral(chars[start..i].iter().collect()));
+                token_stream.push(Token::StringLiteral(chars[start..i].iter().collect()));
 
                 i += 1
             } else if chars[i].is_whitespace() {
