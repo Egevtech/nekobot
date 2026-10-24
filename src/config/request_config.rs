@@ -2,7 +2,6 @@ use bevy_reflect::prelude::*;
 
 #[derive(Reflect, PartialEq, Debug, Clone)]
 pub struct RequestConfig {
-    model: String,
     thinking: String,
 }
 
@@ -65,7 +64,7 @@ impl RequestConfig {
     where T: ToString
     {
         let tokens = Self::tokenize(from.to_string())?;
-        let mut result = RequestConfig{model: String::new(), thinking: "false".to_string()};
+        let mut result = RequestConfig{thinking: "false".to_string()};
         let kvss: Vec<KeyValSeq> = Self::make_sequenses(tokens)?;
 
         for i in 0..result.clone().field_len() {
@@ -187,7 +186,7 @@ mod tests {
     #[test]
     fn request_config_parse_test() {
         let stri = r#"model : "qwen-2.5", thinking : "false""#;
-        let stru = RequestConfig{model: "qwen-2.5".to_string(), thinking: "false".to_string()};
+        let stru = RequestConfig{thinking: "false".to_string()};
 
         assert_eq!(RequestConfig::parse(stri).unwrap(), stru);
     }
