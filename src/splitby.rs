@@ -44,7 +44,7 @@ mod tests {
 
     #[test]
     fn splitby_test1() {
-        let str = str!("12345678");
+        let str = str!("1234567890");
         let strs = str.split_by(4);
 
         assert_eq!(strs, [str!("1234"), str!("5678"), str!("90")]);
