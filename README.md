@@ -9,6 +9,13 @@
 cargo install --git https://github.com/egevtech/nekobot
 ```
 
+Или склонировать репозиторий и собрать самому:
+```bash
+git clone https://github.com/egevtech/nekobot
+
+cargo build
+```
+
 ## Использование
 
 Бот использует два конфигурационных файла, их нужно создать рядом в корне проекта или рядом с бинарником:
